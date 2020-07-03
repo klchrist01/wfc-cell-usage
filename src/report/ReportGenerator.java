@@ -3,15 +3,15 @@ package report;
 import java.util.*;
 import model.CellPhone;
 import model.CellPhoneUsage;
+import model.UserCellPhoneUsage;
 import util.DataReader;
 
 public class ReportGenerator {
 
-	private HashMap<String, CellPhone> phones;
-	private ArrayList<CellPhoneUsage> phoneUsageData;
+	private HashMap<String, UserCellPhoneUsage> phoneUsageData;
+	
 
-	public ReportGenerator(HashMap<String, CellPhone> phones, ArrayList<CellPhoneUsage> phoneData) {
-		this.phones = phones;
+	public ReportGenerator(HashMap<String, UserCellPhoneUsage> phoneData) {
 		phoneUsageData = phoneData;
 	}
 
@@ -26,18 +26,18 @@ public class ReportGenerator {
 	}
 
 	public void generatePhoneUsers() {
-		phones.forEach((k,v) -> outputUserSummary(k));
+		phoneUsageData.forEach((k,v) -> outputUserSummary(k));
 	}
 
 	public void outputUserSummary(String emp) {
-		System.out.println(phones.get(emp));
+		System.out.println(phoneUsageData.get(emp));
 		System.out.println("Total Minutes Used: ");
 		System.out.println("Total Data Used: ");
 	}
 
 	static public void main (String[] args) {
 		DataReader dr = new DataReader();
-		ReportGenerator rg = new ReportGenerator(dr.getCellPhoneData(), dr.getCellPhoneUsageData());
+		ReportGenerator rg = new ReportGenerator(dr.getPhoneUsageData());
 		rg.generateHeader();
 		rg.generatePhoneUsers();
 	}

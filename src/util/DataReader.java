@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import model.CellPhone;
 import model.CellPhoneUsage;
+import model.UserCellPhoneUsage;
 
 public class DataReader {
 
@@ -18,6 +19,8 @@ public class DataReader {
 	private String phoneUsageFile;
 	private Date minDate = new Date();
 	private Date maxDate = new Date();
+	HashMap<String,UserCellPhoneUsage> phoneUsageData = new HashMap<String,UserCellPhoneUsage>();
+	
 	
 	
 	public DataReader() {
@@ -39,12 +42,14 @@ public class DataReader {
 	 * The first line of the file is assumed to contain a header.
 	 * @return An ArrayList of CellPhoneUsage type records
 	 */
-	public ArrayList<CellPhoneUsage> getCellPhoneUsageData() {
-		ArrayList<CellPhoneUsage> results = new ArrayList<CellPhoneUsage>();
+	private void getCellPhoneUsageData() {
+		
 		BufferedReader br;
 		String[] tokens;
 		int numTokens;
 		Date usageDate = new Date();
+		CellPhoneUsage currentRecord;
+		String currentEmp;
 		
 		try {
 			maxDate = PHONE_DATE_FORMAT.parse("19000101");
@@ -70,16 +75,18 @@ public class DataReader {
 				} else {
 					System.out.println("ERROR in DataReader.getCellPhoneUsageData() numTokens="+numTokens);
 				}
-				results.add(new CellPhoneUsage(tokens[0], 
-						usageDate, 
-						Integer.parseInt(tokens[2]), 
-						Double.parseDouble(tokens[3])));
+				currentEmp = tokens[0];
+				currentRecord = new CellPhoneUsage(currentEmp,
+						usageDate,
+						Integer.parseInt(tokens[2]),
+						Double.parseDouble(tokens[3]));
+				phoneUsageData.get(currentEmp).addUsageData(currentRecord);
 			}
 			if (br != null) br.close();
 		} catch (Exception e) {
 			System.out.println("getCellPhoneUsageData "+e);
 		}
-		return results;
+		
 	}
 	
 	/*
@@ -91,8 +98,9 @@ public class DataReader {
 	 * The first line of the file is assumed to contain a header.
 	 * @return A HashMap of CellPhone type records using Employee ID as the key
 	 */
-	public HashMap<String,CellPhone> getCellPhoneData() {
-		HashMap<String,CellPhone> results = new HashMap<String,CellPhone>();
+	private void getCellPhoneData() {
+		
+		
 		BufferedReader br;
 		CellPhone currentRecord;
 		String[] tokens;
@@ -117,13 +125,25 @@ public class DataReader {
 					System.out.println("ERROR in DataReader.getCellPhoneData() numTokens="+numTokens);
 				}
 				currentRecord = new CellPhone(tokens[0], tokens[1], purchaseDate, tokens[3]);
-				results.put(currentRecord.getEmployeeId(), currentRecord);
+				phoneUsageData.put(currentRecord.getEmployeeId(), new UserCellPhoneUsage(currentRecord));
 			}
 			if (br != null) br.close();
 		} catch (Exception e) {
 			System.out.println("getCellPhoneData "+e);
 		} 
-		return results;
+		
+	}
+	
+	private void initializeData() {
+		getCellPhoneData();
+		getCellPhoneUsageData();
+	}
+	
+	public HashMap<String,UserCellPhoneUsage> getPhoneUsageData() { 
+		if(phoneUsageData.isEmpty()) {
+			initializeData();
+		}
+		return phoneUsageData;
 	}
 	
 	public Date getMinDate() {
@@ -138,12 +158,8 @@ public class DataReader {
 
 		DataReader dr = new DataReader();
 
-		Iterator<CellPhone> phoneIter = dr.getCellPhoneData().values().iterator();
-		while(phoneIter.hasNext()) {
-			System.out.println(phoneIter.next().toString());
-		}
 
-		Iterator<CellPhoneUsage> dataIter = dr.getCellPhoneUsageData().iterator();
+		Iterator<UserCellPhoneUsage> dataIter = dr.getPhoneUsageData().values().iterator();
 		while(dataIter.hasNext()) {
 			System.out.println(dataIter.next().toString());
 		}
