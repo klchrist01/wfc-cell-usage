@@ -17,8 +17,10 @@ public class DataReader {
 	
 	private String phoneDataFile;
 	private String phoneUsageFile;
-	private Date minDate = new Date();
-	private Date maxDate = new Date();
+	private Date minDate = new Date(); //Stores the earliest date from the usage records
+	private Date maxDate = new Date(); //Stores the most recent date from the usage records
+	private int totalMinutes;
+	private double totalData;
 	HashMap<String,UserCellPhoneUsage> phoneUsageData = new HashMap<String,UserCellPhoneUsage>();
 	
 	
@@ -40,13 +42,14 @@ public class DataReader {
 	 * Column 3 - Total minutes used on the given date
 	 * Column 4 - Total data used on the given date
 	 * The first line of the file is assumed to contain a header.
-	 * @return An ArrayList of CellPhoneUsage type records
 	 */
 	private void getCellPhoneUsageData() {
 		
 		BufferedReader br;
 		String[] tokens;
 		int numTokens;
+		int minutesUsed;
+		double dataUsed;
 		Date usageDate = new Date();
 		CellPhoneUsage currentRecord;
 		String currentEmp;
@@ -76,11 +79,15 @@ public class DataReader {
 					System.out.println("ERROR in DataReader.getCellPhoneUsageData() numTokens="+numTokens);
 				}
 				currentEmp = tokens[0];
+				minutesUsed = Integer.parseInt(tokens[2]);
+				dataUsed = Double.parseDouble(tokens[3]);
 				currentRecord = new CellPhoneUsage(currentEmp,
 						usageDate,
-						Integer.parseInt(tokens[2]),
-						Double.parseDouble(tokens[3]));
+						minutesUsed,
+						dataUsed);
 				phoneUsageData.get(currentEmp).addUsageData(currentRecord);
+				totalMinutes+=minutesUsed;
+				totalData+=dataUsed;
 			}
 			if (br != null) br.close();
 		} catch (Exception e) {
@@ -96,10 +103,8 @@ public class DataReader {
 	 * Column 3 - Purchase Date (yyyyMMdd)
 	 * Column 4 - Phone model
 	 * The first line of the file is assumed to contain a header.
-	 * @return A HashMap of CellPhone type records using Employee ID as the key
 	 */
 	private void getCellPhoneData() {
-		
 		
 		BufferedReader br;
 		CellPhone currentRecord;
@@ -134,11 +139,17 @@ public class DataReader {
 		
 	}
 	
+	/*
+	 * Loads the phone and usage data
+	 */
 	private void initializeData() {
 		getCellPhoneData();
 		getCellPhoneUsageData();
 	}
 	
+	/*
+	 * Returns a Map of cell phone usage data. The Map Key is the employee ID
+	 */
 	public HashMap<String,UserCellPhoneUsage> getPhoneUsageData() { 
 		if(phoneUsageData.isEmpty()) {
 			initializeData();
@@ -146,19 +157,34 @@ public class DataReader {
 		return phoneUsageData;
 	}
 	
+	/*
+	 * Returns the earliest date from the usage records
+	 */
 	public Date getMinDate() {
 		return minDate;
 	}
 
+	/*
+	 * Returns the most recent date from the cell phone usage records
+	 */
 	public Date getMaxDate() {
 		return maxDate;
 	}
+	
+	public int getTotalMinutes() {
+		return totalMinutes;
+	}
+	
+	public double getTotalData() {
+		return totalData;
+	}
 
+	/*
+	 * Used for testing the class
+	 */
 	public static void main(String args[]) {
 
 		DataReader dr = new DataReader();
-
-
 		Iterator<UserCellPhoneUsage> dataIter = dr.getPhoneUsageData().values().iterator();
 		while(dataIter.hasNext()) {
 			System.out.println(dataIter.next().toString());

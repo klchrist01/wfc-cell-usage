@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-
+/*
+ * Class that holds information for the CellPhone, daily usage records, and Monthly totals
+ */
 public class UserCellPhoneUsage {
 
 	private CellPhone phone;
@@ -19,25 +21,27 @@ public class UserCellPhoneUsage {
 		dailyRecords = new ArrayList<CellPhoneUsage>();
 	}
 	
+	/*
+	 * This method adds the CellPhoneUsage record to the dailyRecords ArrayList. It also increases the MonthlyTotals
+	 * record for the given year and month
+	 */
 	public void addUsageData(CellPhoneUsage usageRecord) {
 		dailyRecords.add(usageRecord);
 		LocalDate tempDate = usageRecord.getUsageDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		UsageKey newKey = new UsageKey(tempDate.getYear(), tempDate.getMonthValue());
 		MonthlyTotals tempRecord = monthlyUsageData.get(newKey);
 		if (tempRecord != null) {
-			//System.out.println("Duplicate usage record for "+phone.getEmployeeId()+"Key="+newKey);
 			tempRecord.add(usageRecord.getMinutesUsed(), usageRecord.getDataUsed());
 		} else {
-			MonthlyTotals newTot = new MonthlyTotals();
-			newTot.data = usageRecord.getDataUsed();
-			newTot.minutes = usageRecord.getMinutesUsed();
-			newTot.year = tempDate.getYear();
-			newTot.month = tempDate.getMonthValue();
+			MonthlyTotals newTot = new MonthlyTotals(usageRecord, tempDate);
 			monthlyUsageData.put(newKey, newTot);
 		}
 		
 	}
 	
+	/*
+	 * Returns the total minutes used for the given month and year
+	 */
 	public int getMinutesTotal(int month, int year) {
 		UsageKey tempKey = new UsageKey(year, month);
 		MonthlyTotals tempTotal = monthlyUsageData.get(tempKey);
@@ -48,6 +52,9 @@ public class UserCellPhoneUsage {
 		}
 	}
 	
+	/*
+	 * Returns the total data used for the given month and year
+	 */
 	public double getDataTotal(int month, int year) {
 		UsageKey tempKey = new UsageKey(year, month);
 		MonthlyTotals tempTotal = monthlyUsageData.get(tempKey);
@@ -68,6 +75,9 @@ public class UserCellPhoneUsage {
 		return result.toString();
 	}
 	
+	/*
+	 * Helper Key class for storing data in the monthlyUsageData Map.
+	 */
 	private class UsageKey {
 		int month;
 		int year;
@@ -91,6 +101,9 @@ public class UserCellPhoneUsage {
 				return false;
 		}
 		
+		/*
+		 * Simple hash function based on concatenating month and year
+		 */
 		public int hashCode() {
 			return (Integer.toString(month)+Integer.toString(year)).hashCode();
 		}
@@ -99,19 +112,32 @@ public class UserCellPhoneUsage {
 		}
 	}
 	
+	/*
+	 * Helper class to store minutes and data totals for the given month and year
+	 */
 	private class MonthlyTotals {
 		int minutes;
 		int month;
 		int year;
 		double data;
 		
+		MonthlyTotals(CellPhoneUsage usageRecord, LocalDate tempDate) {
+			data = usageRecord.getDataUsed();
+			minutes = usageRecord.getMinutesUsed();
+			year = tempDate.getYear();
+			month = tempDate.getMonthValue();
+		}
+		
+		/*
+		 * Adds to the existing values
+		 */
 		void add(int min, double dat) {
 			minutes+=min;
 			data+=dat;
 		}
 		
 		public String toString() {
-			return "Monthly Totals: "+month+"/"+year+" Minutes: "+minutes+" Data: "+data;
+			return "MonthlyTotals: "+month+"/"+year+" Minutes: "+minutes+" Data: "+String.format("%.2f", data);
 		}
 	}
 }
