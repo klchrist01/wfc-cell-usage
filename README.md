@@ -1,5 +1,6 @@
 # Cell Phone Usage Report
-Write a report for cell phone usages in the company for a given year, and print the report to your local printer.
+This repo generates a report for cell phone usage based on data contained in CSV files.
+To execute the program: java report.ReportGenerator
 
 ### Data Model
 Database tables are in comma separated files with the header in the first row. 
