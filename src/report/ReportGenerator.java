@@ -1,5 +1,6 @@
 package report;
 
+import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,8 +26,8 @@ public class ReportGenerator {
 	private Date minDate;
 	private PrintStream outputDevice;
 	public static SimpleDateFormat MONTH_YEAR_DATE_FORMAT = new SimpleDateFormat("MMM yyyy");
-	
-	
+
+
 
 	public ReportGenerator(HashMap<String, UserCellPhoneUsage> phoneData, int minutes, double data, Date max, Date min) {
 		phoneUsageData = phoneData;
@@ -61,7 +62,7 @@ public class ReportGenerator {
 		outputDevice.println("\n-- Cell Phone Usage Detail --");
 		phoneUsageData.forEach((k,v) -> outputUserSummary(k));
 	}
-	
+
 	/*
 	 * Helper method to determine when we are done processing cell phone usage data
 	 */
@@ -73,7 +74,7 @@ public class ReportGenerator {
 		} else {
 			return false;
 		}
-			
+
 	}
 
 	/*
@@ -82,7 +83,7 @@ public class ReportGenerator {
 	public void outputUserSummary(String emp) {
 		UserCellPhoneUsage usage = phoneUsageData.get(emp); 
 		outputDevice.println(usage);
-		
+
 		LocalDate tempMinDate = minDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate tempMaxDate = maxDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int currentYear = tempMinDate.getYear();
@@ -92,7 +93,7 @@ public class ReportGenerator {
 		StringBuffer columnHeader = new StringBuffer();
 		StringBuffer userMonthlyMinutes = new StringBuffer();
 		StringBuffer userMonthlyData = new StringBuffer();
-			
+
 		while (!done(currentYear, currentMonth, maxYear, maxMonth)) {
 			columnHeader.append(currentMonth+"/"+currentYear+"\t");
 			userMonthlyMinutes.append(usage.getMinutesTotal(currentMonth,currentYear)+"\t");
@@ -107,17 +108,27 @@ public class ReportGenerator {
 		outputDevice.println("Monthly Phone Usage\n");
 		outputDevice.println(columnHeader);
 		outputDevice.println(userMonthlyMinutes);
-		
+
 		outputDevice.println("\nMonthly Data Usage\n");
 		outputDevice.println(columnHeader);
 		outputDevice.println(userMonthlyData);
 	}
 
 	static public void main (String[] args) {
-		DataReader dr = new DataReader();
-		ReportGenerator rg = new ReportGenerator(dr.getPhoneUsageData(), dr.getTotalMinutes(), dr.getTotalData(), dr.getMaxDate(),dr.getMinDate());
-		rg.generateHeader();
-		rg.generatePhoneUsers();
+		try {
+			String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+			String appConfigPath = rootPath+"application.properties";
+			Properties appProps = new Properties();
+			appProps.load(new FileInputStream(appConfigPath));
+			String phoneDataFile = appProps.getProperty("phoneDataFile");
+			String phoneUsageFile = appProps.getProperty("usageDataFile");
+			DataReader dr = new DataReader(phoneDataFile, phoneUsageFile);
+			ReportGenerator rg = new ReportGenerator(dr.getPhoneUsageData(), dr.getTotalMinutes(), dr.getTotalData(), dr.getMaxDate(),dr.getMinDate());
+			rg.generateHeader();
+			rg.generatePhoneUsers();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

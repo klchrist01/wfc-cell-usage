@@ -16,7 +16,7 @@ public class DataReader {
 
 	private static SimpleDateFormat PHONE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	public static String PHONE_DATA_FILE = "./data/CellPhone.csv";
-	public static String USAGE_DATA_FILE = "./data/CellPhoneUsageByMonth.csv";
+	public static String USAGE_DATA_FILE = "./data/CellPhoneUsageByMonth2.csv";
 	
 	private String phoneDataFile;
 	private String phoneUsageFile;
