@@ -11,6 +11,9 @@ public class CellPhoneUsage {
 	private double dataUsed;
 	public static SimpleDateFormat USAGE_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
+	/*
+	 * Simple model class to store cell phone usage data read in from CSV file
+	 */
 	public CellPhoneUsage(String emp, Date usageDate, int minutes, double data) {
 		employeeId = emp;
 		this.usageDate = usageDate;

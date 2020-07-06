@@ -8,6 +8,9 @@ import java.util.*;
 import model.CellPhone;
 import model.CellPhoneUsage;
 import model.UserCellPhoneUsage;
+/*
+ * Reads in data from 2 CSV files.
+ */
 
 public class DataReader {
 
@@ -36,7 +39,8 @@ public class DataReader {
 	}
 	
 	/*
-	 * Reads in a CSV file of Cell Phone usage data. Assumes the following format:
+	 * Reads in a CSV file of Cell Phone usage data. Also sums up usage minutes and data amounts.
+	 * Assumes the following format in the CSV:
 	 * Column 1 - Employee ID
 	 * Column 2 - Date of usage (MM/dd/yyyy)
 	 * Column 3 - Total minutes used on the given date
@@ -171,10 +175,16 @@ public class DataReader {
 		return maxDate;
 	}
 	
+	/*
+	 * Total minutes for all records contained in the file
+	 */
 	public int getTotalMinutes() {
 		return totalMinutes;
 	}
 	
+	/*
+	 * Total data used for all records contained in the file
+	 */
 	public double getTotalData() {
 		return totalData;
 	}

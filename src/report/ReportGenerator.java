@@ -15,9 +15,13 @@ import util.DataReader;
 public class ReportGenerator {
 
 	private HashMap<String, UserCellPhoneUsage> phoneUsageData;
+	//Total cell phone minutes used by all users
 	private int totalMinutes;
+	//Total data usage from all users
 	private double totalData;
+	//Latest usage date
 	private Date maxDate;
+	//Earliest usage date
 	private Date minDate;
 	private PrintStream outputDevice;
 	public static SimpleDateFormat MONTH_YEAR_DATE_FORMAT = new SimpleDateFormat("MMM yyyy");
@@ -30,9 +34,13 @@ public class ReportGenerator {
 		totalData = data;
 		maxDate = max;
 		minDate = min;
+		//This could be configured to used a local printer instead of System.out
 		outputDevice = System.out;
 	}
 
+	/*
+	 * Outputs the report summary data
+	 */
 	public void generateHeader() {
 		int numUsers = phoneUsageData.size();
 		outputDevice.println("-- Cell Phone Usage Report Summary --\n");
@@ -46,11 +54,17 @@ public class ReportGenerator {
 		outputDevice.println("Average Data: "+String.format("%.2f",totalData/numUsers));
 	}
 
+	/*
+	 * Outputs detail usage data from each phone/user
+	 */
 	public void generatePhoneUsers() {
 		outputDevice.println("\n-- Cell Phone Usage Detail --");
 		phoneUsageData.forEach((k,v) -> outputUserSummary(k));
 	}
 	
+	/*
+	 * Helper method to determine when we are done processing cell phone usage data
+	 */
 	private boolean done(int currentYear, int currentMonth, int maxYear, int maxMonth) {
 		if (currentYear > maxYear) {
 			return true;
@@ -62,6 +76,9 @@ public class ReportGenerator {
 			
 	}
 
+	/*
+	 * For each phone/user, output monthly usage information
+	 */
 	public void outputUserSummary(String emp) {
 		UserCellPhoneUsage usage = phoneUsageData.get(emp); 
 		outputDevice.println(usage);

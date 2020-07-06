@@ -10,6 +10,9 @@ public class CellPhone {
 	private Date purchaseDate;
 	private String model;
 
+	/*
+	 * Simple model class to store cell phone data read in from a CSV file
+	 */
 	public CellPhone(String emp, String name, Date purchase, String phonemodel) {
 		employeeId = emp;
 		employeeName = name;
