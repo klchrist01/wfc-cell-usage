@@ -1,5 +1,8 @@
 # Cell Phone Usage Report
 This repo generates a report for cell phone usage based on data contained in CSV files.
+
+### Execute
+The code was developed using jdk-14.0.1.7
 To execute the program: java report.ReportGenerator
 
 ### Data Model
