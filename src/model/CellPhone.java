@@ -42,7 +42,7 @@ public class CellPhone {
 		this.model = model;
 	}
 	public String toString() {
-		return "--CellPhone--\n"+"EmpID: "+employeeId+"\nName: "+employeeName+"\nPurchase Date: "+CellPhoneUsage.USAGE_DATE_FORMAT.format(purchaseDate)+"\nModel: "+model;
+		return "Employee ID: "+employeeId+"\nEmployee Name: "+employeeName+"\nPhone Purchase Date: "+CellPhoneUsage.USAGE_DATE_FORMAT.format(purchaseDate)+"\nPhone Model: "+model;
 	}
 
 }

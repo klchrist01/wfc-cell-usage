@@ -3,7 +3,6 @@ package model;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 /*
@@ -65,13 +64,39 @@ public class UserCellPhoneUsage {
 		}
 	}
 	
-	public String toString() {
-		StringBuffer result = new StringBuffer(phone +"\n");
-		Iterator<MonthlyTotals> iter = monthlyUsageData.values().iterator();
-		while (iter.hasNext()) {
-			result.append(iter.next());
-			result.append("\n");
+	/*
+	 * Returns the total minutes used for the given month and year
+	 */
+	public int getMinutesTotal() {
+		int tempTotal = 0;
+		Iterator<MonthlyTotals> iter = monthlyUsageData.values().iterator(); 
+		while(iter.hasNext()) { 
+			tempTotal+=iter.next().minutes;
 		}
+		return tempTotal;
+	}
+	
+	/*
+	 * Returns the total data used for the given month and year
+	 */
+	public double getDataTotal() {
+		double tempTotal = 0;
+		Iterator<MonthlyTotals> iter = monthlyUsageData.values().iterator(); 
+		while(iter.hasNext()) { 
+			tempTotal+=iter.next().data;
+		}
+		return tempTotal;
+	}
+	
+	public String toString() {
+		StringBuffer result = new StringBuffer("\n"+phone +"\n");
+		result.append("Total Minutes Used: "+getMinutesTotal());
+		result.append("\nTotal Data Used: "+getDataTotal());
+		
+//		result.append("\n");
+//		Iterator<MonthlyTotals> iter = monthlyUsageData.values().iterator(); 
+//		while (iter.hasNext()) result.append(iter.next()+"\n"); 
+
 		return result.toString();
 	}
 	
