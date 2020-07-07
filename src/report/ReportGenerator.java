@@ -38,28 +38,32 @@ public class ReportGenerator {
 		//This could be configured to used a local printer instead of System.out
 		outputDevice = System.out;
 	}
+	
+	private void output(String line) {
+		outputDevice.println(line);
+	}
 
 	/*
 	 * Outputs the report summary data
 	 */
 	public void generateHeader() {
 		int numUsers = phoneUsageData.size();
-		outputDevice.println("-- Cell Phone Usage Report Summary --\n");
-		outputDevice.println("Report Run Date: "+new Date());	
-		outputDevice.println("Data Starting Date: "+MONTH_YEAR_DATE_FORMAT.format(maxDate));
-		outputDevice.println("Data Ending Date: "+MONTH_YEAR_DATE_FORMAT.format(minDate));
-		outputDevice.println("Number of Phones: "+phoneUsageData.size());
-		outputDevice.println("Total Minutes: "+totalMinutes);
-		outputDevice.println("Total Data: "+String.format("%.2f", totalData));
-		outputDevice.println("Average Minutes: "+totalMinutes/numUsers);
-		outputDevice.println("Average Data: "+String.format("%.2f",totalData/numUsers));
+		output("-- Cell Phone Usage Report Summary --\n");
+		output("Report Run Date: "+new Date());	
+		output("Data Starting Date: "+MONTH_YEAR_DATE_FORMAT.format(maxDate));
+		output("Data Ending Date: "+MONTH_YEAR_DATE_FORMAT.format(minDate));
+		output("Number of Phones: "+phoneUsageData.size());
+		output("Total Minutes: "+totalMinutes);
+		output("Total Data: "+String.format("%.2f", totalData));
+		output("Average Minutes: "+totalMinutes/numUsers);
+		output("Average Data: "+String.format("%.2f",totalData/numUsers));
 	}
 
 	/*
 	 * Outputs detail usage data from each phone/user
 	 */
 	public void generatePhoneUsers() {
-		outputDevice.println("\n-- Cell Phone Usage Detail --");
+		output("\n-- Cell Phone Usage Detail --");
 		phoneUsageData.forEach((k,v) -> outputUserSummary(k));
 	}
 
@@ -82,7 +86,7 @@ public class ReportGenerator {
 	 */
 	public void outputUserSummary(String emp) {
 		UserCellPhoneUsage usage = phoneUsageData.get(emp); 
-		outputDevice.println(usage);
+		output(usage.toString());
 
 		LocalDate tempMinDate = minDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate tempMaxDate = maxDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -105,13 +109,13 @@ public class ReportGenerator {
 				currentMonth++;
 			}
 		}
-		outputDevice.println("Monthly Phone Usage\n");
-		outputDevice.println(columnHeader);
-		outputDevice.println(userMonthlyMinutes);
+		output("Monthly Phone Usage\n");
+		output(columnHeader.toString());
+		output(userMonthlyMinutes.toString());
 
-		outputDevice.println("\nMonthly Data Usage\n");
-		outputDevice.println(columnHeader);
-		outputDevice.println(userMonthlyData);
+		output("\nMonthly Data Usage\n");
+		output(columnHeader.toString());
+		output(userMonthlyData.toString());
 	}
 
 	static public void main (String[] args) {
